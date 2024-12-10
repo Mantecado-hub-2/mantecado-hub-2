@@ -19,10 +19,10 @@ load_dotenv()
 db = SQLAlchemy()
 migrate = Migrate()
 
-community_members = db.Table('community_members',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('community_id', db.Integer, db.ForeignKey('community.id'), primary_key=True)
-)
+community_members = db.Table('community_members', db.Column('user_id',
+                                                            db.Integer, db.ForeignKey('user.id'), primary_key=True),
+                             db.Column('community_id', db.Integer, db.ForeignKey('community.id'), primary_key=True)
+                             )
 
 
 def create_app(config_name='development'):
@@ -35,9 +35,6 @@ def create_app(config_name='development'):
     # Initialize SQLAlchemy and Migrate with the app
     db.init_app(app)
     migrate.init_app(app, db)
-
-    from app.modules.auth.models import User
-    from app.modules.community.models import Community
 
     # Register modules
     module_manager = ModuleManager(app)
@@ -71,7 +68,7 @@ def create_app(config_name='development'):
             'DOMAIN': os.getenv('DOMAIN', 'localhost'),
             'APP_VERSION': get_app_version()
         }
-    
+
     with app.app_context():
         db.create_all()
 

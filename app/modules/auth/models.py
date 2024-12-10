@@ -14,7 +14,7 @@ class User(db.Model, UserMixin):
     created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
     profile = db.relationship('UserProfile', backref='user', uselist=False)
-    ## LOS DATASET PERTENECEN A UNA COMUNIDAD A LA QUE PERTENECES TU
+    # LOS DATASET PERTENECEN A UNA COMUNIDAD A LA QUE PERTENECES TU
     communities = db.relationship('Community', secondary='members', back_populates='members')
 
     def __init__(self, **kwargs):
