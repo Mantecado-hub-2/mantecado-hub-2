@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, TextAreaField, StringField
-from wtforms.validator import DataRequired, Length
+from wtforms.validators import DataRequired, Length
 
 
 class CommunityForm(FlaskForm):

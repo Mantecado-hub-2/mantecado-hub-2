@@ -5,7 +5,7 @@ from app.modules.community.repositories import CommunityRepository
 from app import db, community_members
 
 
-class CommunitiesService(BaseService):
+class CommunityService(BaseService):
     def __init__(self):
         self.repository = CommunityRepository()
         super().__init__(self.repository)

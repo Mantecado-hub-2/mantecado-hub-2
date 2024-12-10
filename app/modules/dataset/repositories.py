@@ -13,8 +13,6 @@ from app.modules.dataset.models import (
     DSViewRecord,
     DataSet
 )
-from app.modules.community.models import Community
-from app import community_members
 from core.repositories.BaseRepository import BaseRepository
 
 logger = logging.getLogger(__name__)
@@ -73,10 +71,7 @@ class DataSetRepository(BaseRepository):
     def get_synchronized(self, current_user_id: int) -> DataSet:
         return (
             self.model.query.join(DSMetaData)
-            .join(Community, Community.id == DataSet.community_id)
-            .join(community_members, community_members.c.community_id == Community.id)
-            .filter(community_members.c.user_id == current_user_id)
-            .filter(DSMetaData.dataset_doi.isnot(None))
+            .filter(DataSet.user_id == current_user_id, DSMetaData.dataset_doi.isnot(None))
             .order_by(self.model.created_at.desc())
             .all()
         )
@@ -84,10 +79,7 @@ class DataSetRepository(BaseRepository):
     def get_unsynchronized(self, current_user_id: int) -> DataSet:
         return (
             self.model.query.join(DSMetaData)
-            .join(Community, Community.id == DataSet.community_id)
-            .join(community_members, community_members.c.community_id == Community.id)
-            .filter(community_members.c.user_id == current_user_id)
-            .filter(DSMetaData.dataset_doi.is_(None))
+            .filter(DataSet.user_id == current_user_id, DSMetaData.dataset_doi.is_(None))
             .order_by(self.model.created_at.desc())
             .all()
         )
@@ -95,11 +87,7 @@ class DataSetRepository(BaseRepository):
     def get_unsynchronized_dataset(self, current_user_id: int, dataset_id: int) -> DataSet:
         return (
             self.model.query.join(DSMetaData)
-            .join(Community, Community.id == DataSet.community_id)
-            .join(community_members, community_members.c.community_id == Community.id)
-            .filter(community_members.c.user_id == current_user_id)
-            .filter(DataSet.id == dataset_id)
-            .filter(DSMetaData.dataset_doi.is_(None))
+            .filter(DataSet.user_id == current_user_id, DataSet.id == dataset_id, DSMetaData.dataset_doi.is_(None))
             .first()
         )
 

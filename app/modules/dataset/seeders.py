@@ -9,7 +9,7 @@ from app.modules.dataset.models import (
     PublicationType,
     DSMetrics,
     Author)
-from app.modules.community.models import Community
+from app.modules.auth.models import User
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 
@@ -20,10 +20,11 @@ class DataSetSeeder(BaseSeeder):
 
     def run(self):
         # Retrieve users
-        community1 = Community.query.filter_by(name='community1').first()
-        community2 = Community.query.filter_by(name='community2').first()
-        if not community1 or not community2:
-            raise Exception("Communities not found. Please seed communities first.")
+        user1 = User.query.filter_by(email='user1@example.com').first()
+        user2 = User.query.filter_by(email='user2@example.com').first()
+
+        if not user1 or not user2:
+            raise Exception("Users not found. Please seed users first.")
         # Create DSMetrics instance
         ds_metrics = DSMetrics(number_of_models='5', number_of_features='50')
         seeded_ds_metrics = self.seed([ds_metrics])[0]
@@ -57,9 +58,10 @@ class DataSetSeeder(BaseSeeder):
         # Create DataSet instances
         datasets = [
             DataSet(
-                community_id=community1.id if i % 2 == 0 else community2.id,
+                user_id=user1.id if i % 2 == 0 else user2.id,
                 ds_meta_data_id=seeded_ds_meta_data[i].id,
-                created_at=datetime.now(timezone.utc)
+                created_at=datetime.now(timezone.utc),
+                publico=(i % 2 == 0)
             ) for i in range(4)
         ]
         seeded_datasets = self.seed(datasets)
@@ -105,9 +107,9 @@ class DataSetSeeder(BaseSeeder):
             file_name = f'file{i+1}.uvl'
             feature_model = seeded_feature_models[i]
             dataset = next(ds for ds in seeded_datasets if ds.id == feature_model.data_set_id)
-            community_id = dataset.community_id
+            user_id = dataset.user_id
 
-            dest_folder = os.path.join(working_dir, 'uploads', f'community_{community_id}', f'dataset_{dataset.id}')
+            dest_folder = os.path.join(working_dir, 'uploads', f'user_{user_id}', f'dataset_{dataset.id}')
             os.makedirs(dest_folder, exist_ok=True)
             shutil.copy(os.path.join(src_folder, file_name), dest_folder)
 

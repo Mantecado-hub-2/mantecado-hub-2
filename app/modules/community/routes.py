@@ -1,7 +1,9 @@
-from app.models.community.forms import CommunityForm
-from app.models.community.services import CommunityService
+from app.modules.community.forms import CommunityForm
+from app.modules.community.services import CommunityService
 from app.modules.community import community_bp
-from app.modules.dataset.models.dataset import DataSet
+from app.modules.dataset.models import DataSet
+from app import community_members
+from app.modules.auth.models import User
 
 from flask import render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
@@ -58,6 +60,11 @@ def show_community(community_id):
 @login_required
 def community_datasets(community_id):
     community = service.get_or_404(community_id)
-    datasets = DataSet.query.filter_by(community_id=community_id).all()
+    datasets = (
+        DataSet.query.join(User)
+        .join(community_members)
+        .filter(community_members.c.community_id == community_id)
+        .all()
+    )
 
     return render_template("community/community_datasets.html", community=community, datasets=datasets)
