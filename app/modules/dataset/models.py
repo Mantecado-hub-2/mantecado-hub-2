@@ -70,7 +70,8 @@ class DSMetaData(db.Model):
 
 class DataSet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    ## AHORA LOS DATASETS PERTENECEN A UNA COMUNIDAD CIENTIFICA
+    community_id = db.Column(db.Integer, db.ForeignKey('community.id'), nullable=False)
 
     ds_meta_data_id = db.Column(db.Integer, db.ForeignKey('ds_meta_data.id'), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
