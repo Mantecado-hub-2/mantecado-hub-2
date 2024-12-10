@@ -131,6 +131,7 @@ def create_dataset():
 
     return render_template("dataset/upload_dataset.html", form=form, use_fakenodo=USE_FAKENODO)
 
+
 @dataset_bp.route("/dataset/list", methods=["GET", "POST"])
 @login_required
 def list_dataset():
@@ -203,7 +204,7 @@ def delete():
 def download_dataset(dataset_id):
     dataset = dataset_service.get_or_404(dataset_id)
 
-    file_path = f"uploads/user_{dataset.user_id}/dataset_{dataset.id}/"
+    file_path = f"uploads/comunity_{dataset.community.id}/dataset_{dataset.id}/"
 
     temp_dir = tempfile.mkdtemp()
     zip_path = os.path.join(temp_dir, f"dataset_{dataset_id}.zip")
@@ -300,4 +301,12 @@ def get_unsynchronized_dataset(dataset_id):
     if not dataset:
         abort(404)
 
+    return render_template("dataset/view_dataset.html", dataset=dataset)
+
+
+@dataset_bp.route("/dataset/<int:dataset_id>/", methods=["GET"])
+def view_dataset(dataset_id):
+    # Obtén el dataset usando el ID
+    dataset = dataset_service.get_or_404(dataset_id)
+    # Renderiza la plantilla con la información del dataset
     return render_template("dataset/view_dataset.html", dataset=dataset)
